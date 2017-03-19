@@ -16,10 +16,10 @@ npm i firebase@3.7.2 --save
 ## closure-defines
 
 ```
-re-fx.firebase.api-key
-re-fx.firebase.auth-domain
-re-fx.firebase.database-url
-re-fx.firebase.storage-bucket
+re_fx.firebase.api_key
+re_fx.firebase.auth_domain
+re_fx.firebase.database_url
+re_fx.firebase.storage_bucket
 ```
 
 ## usage
