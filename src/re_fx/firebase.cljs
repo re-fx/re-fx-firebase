@@ -4,14 +4,14 @@
             [clojure.string :as st])
   (:import [goog]))
 
-(goog-define api-key nil)
-(goog-define auth-domain nil)
-(goog-define database-url nil)
-(goog-define storage-bucket nil)
-(assert api-key)
-(assert auth-domain)
-(assert database-url)
-(assert storage-bucket)
+(goog-define api-key "")
+(goog-define auth-domain "")
+(goog-define database-url "")
+(goog-define storage-bucket "")
+(assert (not (= "" api-key)))
+(assert (not (= "" auth-domain)))
+(assert (not (= "" database-url)))
+(assert (not (= "" storage-bucket)))
 
 ;; stolen from lein-figwheel
 (defn react-native-env? [] (and (exists? goog/global.navigator)
