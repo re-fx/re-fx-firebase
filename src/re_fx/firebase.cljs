@@ -74,19 +74,6 @@
         (doall))
    nil))
 
-(re/reg-fx
- :firebase-connected-listen
- (fn firebase-connected-listen-fx [{:keys [on-connected on-disconnected]
-                                    :or   {on-connected [:firebase-connected-listen-no-on-connected]
-                                           on-disconnected [:firebase-connected-listen-no-on-disconnected]}}]
-   (let [ref (.ref firebase-db ".info/connected")]
-     (.on ref "value" (fn firebase-connected-listen-fx-value [s]
-                        (let [v (js->clj (.val s))]
-                          (if v
-                            (re/dispatch on-connected)
-                            (re/dispatch on-disconnected)))))
-     nil)))
-
 (trace-fx
  (re/reg-fx
   :firebase-login
@@ -117,6 +104,46 @@
            (fn firebase-logout-on-success [] (re/dispatch on-success))
            (fn firebase-logout-on-failure [] (re/dispatch on-failure)))
     nil))
+
+ (re/reg-fx
+  :firebase-connected-listen
+  (fn firebase-connected-listen-fx [{:keys [on-connected on-disconnected]
+                                     :or   {on-connected [:firebase-connected-listen-no-on-connected]
+                                            on-disconnected [:firebase-connected-listen-no-on-disconnected]}}]
+    (let [ref (.ref firebase-db ".info/connected")]
+      (.on ref "value" (fn firebase-connected-listen-fx-value [s]
+                         (let [v (js->clj (.val s))]
+                           (if v
+                             (re/dispatch on-connected)
+                             (re/dispatch on-disconnected)))))
+      nil)))
+
+ (re/reg-fx
+  :firebase-login
+  (fn firebase-login-fx [{:keys [username password on-success on-failure]
+                          :or   {on-success [:firebase-login-no-on-success]
+                                 on-failure [:firebase-login-no-on-failure]}}]
+    (.then (.signInWithEmailAndPassword (.auth root) username password)
+           (fn firebase-login-on-success [] (re/dispatch on-success))
+           (fn firebase-login-on-failure [] (re/dispatch on-failure)))))
+
+ (re/reg-fx
+  :firebase-login-with-custom-token
+  (fn firebase-login-with-custom-token-fx [{:keys [token on-success on-failure]
+                                            :or   {on-success [:firebase-login-with-custom-token-no-on-success]
+                                                   on-failure [:firebase-login-with-custom-token-no-on-failure]}}]
+    (.then (.signInWithCustomToken (.auth root) token)
+           (fn firebase-login-with-custom-token-on-success [] (re/dispatch on-success))
+           (fn firebase-login-with-custom-token-on-failure [] (re/dispatch on-failure)))))
+
+ (re/reg-fx
+  :firebase-logout
+  (fn firebase-logout-fx [{:keys [on-success on-failure]
+                           :or   {on-success [:firebase-logout-no-on-success]
+                                  on-failure [:firebase-logout-no-on-failure]}}]
+    (.then (.signOut (.auth root))
+           (fn firebase-logout-on-success [] (re/dispatch on-success))
+           (fn firebase-logout-on-failure [] (re/dispatch on-failure)))))
 
  (re/reg-fx
   :firebase-listen-value
